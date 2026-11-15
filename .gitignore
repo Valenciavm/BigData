@@ -1,0 +1,10 @@
+# SSH & certificates
+*.pem
+
+# Environment variables
+.env
+.env.*
+
+.venv
+.venv/
+.venv/*

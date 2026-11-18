@@ -12,11 +12,24 @@ Usage:
 import os
 import sys
 import argparse
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 0. Windows Hadoop Setup (winutils for local I/O)
+# ─────────────────────────────────────────────────────────────────────────────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+HADOOP_HOME = os.path.join(BASE_DIR, ".hadoop")
+
+if os.name == "nt":
+    os.environ["HADOOP_HOME"] = HADOOP_HOME
+    os.environ["hadoop.home.dir"] = HADOOP_HOME
+    bin_dir = os.path.join(HADOOP_HOME, "bin")
+    if bin_dir not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = bin_dir + os.pathsep + os.environ.get("PATH", "")
+
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import DoubleType, IntegerType, DateType
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 LOCAL_DATA_DIR = os.path.join(PROJECT_DIR, "punto-2-fuentes-datos", "datos")
 LOCAL_OUTPUT_DIR = os.path.join(BASE_DIR, "output_trusted")
@@ -123,7 +136,7 @@ def process_dataset(spark, name):
 
     print(f"  Writing Parquet to: {output_path}")
     df_transformed.write.mode("overwrite").partitionBy(*info["partition_by"]).parquet(output_path)
-    print(f"  [OK] Successfully completed.")
+    print(f"  [OK] Successfully completed: {name}")
 
 def main():
     parser = argparse.ArgumentParser(description="Local PySpark processing runner for dataset validation")

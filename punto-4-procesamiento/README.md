@@ -105,4 +105,7 @@ python run_local_spark.py --dataset agentes_gncv
 # Process all available local sample datasets
 python run_local_spark.py --all
 ```
-Generated partitioned Parquet files will be stored locally under `punto-4-procesamiento/output_trusted/`.
+Generated partitioned Parquet files will be stored locally under `punto-4-procesamiento/output_trusted/` (which is excluded from Git via `.gitignore`).
+
+#### Note for Windows Users:
+Apache Spark relies on POSIX file permissions. When writing Parquet files to a local Windows filesystem, Spark requires `winutils.exe` and `hadoop.dll`. The runner script automatically resolves `HADOOP_HOME` if these binaries are placed in `punto-4-procesamiento/.hadoop/bin/`.

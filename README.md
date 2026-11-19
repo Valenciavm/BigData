@@ -4,11 +4,11 @@
 
 ## I. Integrantes del proyecto
 
-* Martin Valencia, email-eafit
-* Samuel Rivero, email-eafit
+* Martin Valencia, mvalenciv1@eafit.edu.co
+* Samuel Rivero, seriverou@eafit.edu.co
 * Sergio Deluquez, sdeluque1@eafit.edu.co
 
-**Repositorio GitHub del proyecto 2:** `[https://github.com/](https://github.com/)...`
+**Repositorio GitHub del proyecto 2:** https://github.com/Valenciavm/BigData
 
 Cada grupo de trabajo cargará este documento y lo compartirá con el profesor:
 

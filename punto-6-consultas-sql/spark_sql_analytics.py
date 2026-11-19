@@ -303,7 +303,7 @@ def get_spark_session(app_name: str = "EnergiaCol-SparkSQL-Analytics"):
     Intenta habilitar Hive metastore si está disponible.
     """
     try:
-        from pyspark.sql import SparkSession
+        from pyspark.sql import SparkSession #type: ignore
     except ImportError:
         logger.error("PySpark no está instalado en este entorno de Python.")
         logger.error("Ejecute: pip install pyspark o invoque via spark-submit en un cluster EMR.")

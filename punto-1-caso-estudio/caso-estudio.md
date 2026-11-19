@@ -5,7 +5,7 @@ El proyecto aborda la cadena logística, distribución y consumo del sector ener
 
 Mediante el uso de una arquitectura Big Data en AWS (RDS MariaDB, EC2 y almacenamiento masivo vía API/URL hacia S3, AWS Glue, EMR/PySpark y Athena), el sistema integra más de 13.9 millones de registros heterogéneos para analizar la concentración del mercado mayorista, la efectividad de los subsidios en regiones fronterizas y la trazabilidad de los biocombustibles.
 
-## Preguntas de Negocio (Rúbrica - 5 Preguntas)
+## Preguntas de Negocio
 
 + Concentración del Mercado Mayorista: ¿Qué porcentaje del volumen total de despacho de combustibles (7.18M de filas) concentran los principales distribuidores mayoristas frente a la red nacional de estaciones de servicio (6.48M de filas)?
 

@@ -71,9 +71,6 @@ También, deberá crear un repositorio en GitHub, creando un directorio explíci
 
 * **Punto 6:** Consultas analíticas descriptivas resolviendo las 5 preguntas de negocio con AWS Athena, EMR Hive y SparkSQL. Ver documentación técnica detallada en [`punto-6-consultas-sql/info.md`](./punto-6-consultas-sql/info.md), scripts SQL en [`01_consultas_negocio_athena_hive.sql`](./punto-6-consultas-sql/01_consultas_negocio_athena_hive.sql) y script distribuido en [`spark_sql_analytics.py`](./punto-6-consultas-sql/spark_sql_analytics.py).
 
-* **Punto 7:** Consultas y procesamiento analítico descriptivo con Apache Spark en Python (`pyspark`). Scripts optimizados distribuidos por cada pregunta de negocio (Q1 a Q5) desplegados en AWS Glue. Ver documentación técnica y código en [`punto-7-pyspark-analitico/info.md`](./punto-7-pyspark-analitico/info.md).
+* **Punto 7:** Consultas y procesamiento analítico descriptivo con Apache Spark en Python (`pyspark`). Cinco pipelines modulares de alta concurrencia desarrollados en AWS Glue 5.0 (G.1X) para responder las 5 preguntas de negocio (Q1 a Q5), generando resultados analíticos en formato Parquet comprimidos con Snappy en `s3://big-data-lake-energiacol/analytics/`. Ver documentación técnica completa, scripts y evidencias en [`punto-7-pyspark-analitico/info.md`](./punto-7-pyspark-analitico/info.md) y [`jobs/`](./punto-7-pyspark-analitico/jobs/).
 
-* **Punto 8:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
-
-
-* **Punto 8:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 8:** Aplicación web interactiva de visualización de datos analíticos construida con Python, Streamlit y Plotly. Conexión directa y serverless a los datasets Parquet en Amazon S3 mediante `s3fs`, navegación multidimensional por análisis (Q1–Q5), métricas de calidad de datos, gráficos dinámicos interactivos y módulo de exportación a CSV. Ver documentación detallada, código y evidencias en [`punto-8-visualizacion/info.md`](./punto-8-visualizacion/info.md) y [`dashboard.py`](./punto-8-visualizacion/dashboard.py).

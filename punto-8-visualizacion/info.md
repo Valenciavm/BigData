@@ -51,28 +51,30 @@ Dashboard interactivo local
 
 ## 4. Estructura del proyecto
 
-La estructura propuesta para la aplicación es:
+La estructura de este módulo de visualización es:
 
 ```text
-energia-dashboard/
+punto-8-visualizacion/
 │
-├── app.py
-│
-├── requirements.txt
-│
-├── venv/
-│
-└── analytics-data/   (opcional)
+├── dashboard.py          # Implementación principal del dashboard con Streamlit y Plotly
+├── requirements.txt      # Dependencias necesarias para ejecutar la aplicación
+├── info.md               # Documentación técnica completa y guía de despliegue
+└── evidencias/           # Capturas de pantalla de la ejecución del dashboard
+    ├── 01_dashboard_q1_overview.png
+    ├── 02_dashboard_q1_hhi_chart.png
+    ├── 03_dashboard_q4_biofuels_table.png
+    ├── 04_dashboard_q4_biofuels_chart.jpeg
+    ├── 05_dashboard_q5_correlations_chart.jpeg
+    └── 06_dashboard_export_data.jpeg
 ```
 
 Descripción:
 
-- `app.py`: implementación principal del dashboard.
-- `requirements.txt`: dependencias necesarias para ejecutar la aplicación.
-- `venv/`: entorno virtual de Python.
-- `analytics-data/`: directorio opcional para almacenar copias locales de los resultados descargados desde S3.
+- `dashboard.py`: código fuente del dashboard interactivo con integración a S3 mediante `s3fs`.
+- `requirements.txt`: especificación de librerías (`streamlit`, `pandas`, `plotly`, `s3fs`, `pyarrow`).
+- `evidencias/`: capturas reales de la interfaz gráfica y análisis visual interactivo.
 
-La aplicación puede consultar directamente S3, por lo que no es obligatorio descargar los archivos Parquet al equipo local.
+La aplicación consulta directamente los archivos Parquet en el bucket de Amazon S3, evitando la duplicación de datos en el entorno local.
 
 ## 5. Configuración de AWS
 
@@ -385,3 +387,33 @@ Se desarrolló una alternativa de visualización basada en herramientas Python d
 Esta implementación permite consultar los datasets de Q1–Q5, explorar sus estructuras, revisar indicadores de calidad y generar visualizaciones interactivas sin depender de servicios adicionales de visualización de AWS.
 
 La solución mantiene la separación entre procesamiento, almacenamiento y visualización, conservando AWS Glue como motor de procesamiento analítico y Amazon S3 como repositorio de resultados.
+
+---
+
+## 12. Evidencias de Ejecución del Dashboard Interactivo
+
+A continuación se presentan las capturas de la aplicación web interactiva desarrollada con **Streamlit y Plotly**, conectada directamente a los resultados analíticos en formato Parquet en Amazon S3:
+
+### 1. Interfaz Principal y Navegación — Q1 (Concentración de Mercado)
+Vista del encabezado de la aplicación `Energy Colombia — Analytics Dashboard`, panel lateral de navegación con selección de análisis (`Q1 — Market Concentration`), dataset (`annual_hhi`), indicadores de resumen (41 registros, 6 columnas, 0 nulos) y vista previa tabular de datos:
+![Encabezado y vista previa Q1](./evidencias/01_dashboard_q1_overview.png)
+
+### 2. Gráfico Interactivo de Barras — Índice HHI (Q1)
+Visualización dinámica desarrollada con Plotly integrada en Streamlit, mostrando los niveles de concentración HHI por tipo de producto despachado en el mercado mayorista de combustibles:
+![Gráfico de barras HHI Q1](./evidencias/02_dashboard_q1_hhi_chart.png)
+
+### 3. Exploración de Datos y Calidad — Q4 (Biocombustibles)
+Navegación al análisis `Q4 — Biofuels` para el dataset `department_comparison`, visualizando la auditoría de registros (2,169 filas, 11 columnas) y el reporte de calidad de datos por departamento y periodo:
+![Tabla y calidad de datos Q4](./evidencias/03_dashboard_q4_biofuels_table.png)
+
+### 4. Gráfico Interactivo Comparativo de Biocombustibles (Q4)
+Visualización interactiva de volumen anual por categoría de biocombustible, comparando la distribución de Biodiésel (B100) frente al Etanol carburante:
+![Gráfico comparativo biocombustibles Q4](./evidencias/04_dashboard_q4_biofuels_chart.jpeg)
+
+### 5. Análisis de Correlaciones Energéticas — Q5 (Macrotendencias)
+Visualización interactiva con gráfico de líneas (`Line Chart`) en el módulo `Q5 — Energy Trends`, analizando el comportamiento de las correlaciones entre despachos de combustibles fósiles e indicadores de generación eléctrica de la IEA (hidroeléctrica, térmica a gas/carbón/petróleo y energías renovables):
+![Gráfico de líneas correlaciones Q5](./evidencias/05_dashboard_q5_correlations_chart.jpeg)
+
+### 6. Módulo de Exportación de Datos a CSV
+Funcionalidad interactiva de descarga directa (`Download dataset as CSV`), permitiendo a analistas de negocio exportar los resultados procesados hacia sus entornos locales de análisis:
+![Módulo de exportación CSV](./evidencias/06_dashboard_export_data.jpeg)

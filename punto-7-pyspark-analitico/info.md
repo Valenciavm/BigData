@@ -261,27 +261,6 @@ Las categorías de generación eléctrica de la IEA deben revisarse antes de rea
 
 Las correlaciones entre niveles de series temporales pueden ser espurias cuando existen tendencias comunes. Por ello, también deben considerarse las variaciones y tasas de crecimiento.
 
-## 7.9. Módulo compartido y reutilización de código
-
-Los cinco trabajos se desarrollaron inicialmente como scripts independientes. Por esta razón, algunas operaciones de preparación de datos y validación se encuentran implementadas dentro de cada trabajo.
-
-Posteriormente se inició el desarrollo de un módulo compartido denominado `common`, cuyo propósito es centralizar las funciones reutilizables.
-
-Funciones previstas:
-
-- `get_logger()`: configuración de logging.
-- `validate_columns()`: validación de esquemas.
-- `load_table()`: lectura de tablas del Glue Data Catalog.
-- `normalize_text()`: normalización de variables categóricas.
-- `parse_numeric_column()`: conversión de valores numéricos con distintos separadores.
-- `add_date_dimensions()`: creación de dimensiones temporales.
-- `write_parquet()`: escritura estandarizada de resultados.
-- `log_dataframe_info()`: inspección de DataFrames.
-- `log_null_counts()`: diagnóstico de valores nulos.
-
-La librería se distribuirá como `common.zip` en S3 para que los trabajos de Glue puedan importarla.
-
-**Estado:** el módulo base fue elaborado, pero su integración en Q1–Q5 y las pruebas de regresión todavía están pendientes. Los trabajos actuales continúan siendo independientes de esta librería.
 
 ## 7.10. Validación de resultados
 

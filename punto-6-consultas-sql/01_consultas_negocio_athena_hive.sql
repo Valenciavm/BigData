@@ -20,7 +20,7 @@ WITH despacho_por_departamento AS (
         SUM(volumen_despachado) AS volumen_total_despachado,
         COUNT(*) AS total_transacciones_despacho
     FROM distribuidores_mayoristas
-    WHERE anio_despacho >= 2022
+    WHERE TRY_CAST (anio_despacho AS INTEGER) >= 2022
     GROUP BY departamento, producto
 ),
 totales_nacionales AS (
@@ -65,7 +65,7 @@ WITH consumo_estaciones AS (
         SUM(volumen_despachado) AS volumen_total,
         COUNT(DISTINCT CASE WHEN zona_frontera = 'SI' THEN subtipo_comprador END) AS eds_frontera_activas
     FROM estaciones_servicio
-    WHERE anio_despacho >= 2022
+    WHERE TRY_CAST (anio_despacho AS INTEGER) >= 2022
     GROUP BY codigo_municipio_dane_destino, departamento, municipio, anio_despacho
 ),
 cupos_asignados AS (
@@ -75,7 +75,7 @@ cupos_asignados AS (
         SUM(beneficio) AS cupo_total_upme_asignado,
         COUNT(*) AS total_asignaciones_cupo
     FROM beneficios_frontera
-    WHERE anio_beneficio >= 2022
+    WHERE TRY_CAST (anio_beneficio AS INTEGER) >= 2022
     GROUP BY codigo_municipio_dane_destino, anio_beneficio
 )
 SELECT
@@ -198,7 +198,7 @@ FROM demanda_despacho_mayorista d
 LEFT JOIN produccion_biocombustibles p 
     ON d.anio_despacho = p.anio_despacho 
    AND d.mes_despacho = p.mes_despacho
-WHERE d.anio_despacho >= 2022
+WHERE TRY_CAST (d.anio_despacho AS INTEGER) >= 2022
 ORDER BY d.anio_despacho DESC, d.mes_despacho DESC;
 
 
@@ -217,7 +217,7 @@ WITH generacion_electrica AS (
         SUM(CASE WHEN product IN ('Coal', 'Natural gas', 'Oil') THEN value ELSE 0 END) AS gen_termica_fosil_gwh,
         SUM(value) AS gen_total_gwh
     FROM iea_electricity
-    WHERE year BETWEEN 2018 AND 2022
+    WHERE TRY_CAST (year AS INTEGER) BETWEEN 2018 AND 2022
     GROUP BY year, month
 ),
 consumo_gas_mensual AS (
@@ -247,7 +247,9 @@ SELECT
     ROUND(COALESCE(c.combustible_liquido_galones, 0), 2) AS despacho_combustibles_galones
 FROM generacion_electrica e
 LEFT JOIN consumo_gas_mensual g 
-    ON e.year = g.year AND e.month = g.month
+    ON TRY_CAST(e.year AS INTEGER) = TRY_CAST(g.year AS INTEGER)
+   AND TRY_CAST(e.month AS INTEGER) = TRY_CAST(g.month AS INTEGER)
 LEFT JOIN despacho_combustibles_mensual c 
-    ON e.year = c.year AND e.month = c.month
+    ON TRY_CAST(e.year AS INTEGER) = TRY_CAST(c.year AS INTEGER)
+   AND TRY_CAST(e.month AS INTEGER) = TRY_CAST(c.month AS INTEGER)
 ORDER BY e.year DESC, e.month DESC;

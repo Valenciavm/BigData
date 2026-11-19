@@ -2,7 +2,7 @@ import boto3
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 ssm_client = boto3.client("ssm", region_name="us-east-2")
 INSTANCE_ID = os.getenv("EC2_INSTANCE_ID")
@@ -18,13 +18,13 @@ FILES = [
         "s3://big-data-lake-energiacol/raw/ec2/ventas-gncv/"
     ),
     (
-        "/home/ec2-user/data/iea-electricity/archive.zip",
-        "s3://big-data-lake-energiacol/raw/ec2/iea-electricity/"
+        "/home/ec2-user/data/iea-monthly-electricity-statistics/file_zip.csv",
+        "s3://big-data-lake-energiacol/raw/ec2/iea-monthly-electricity-statistics/"
     ),
 ]
 
 for ec2_path, s3_path in FILES:
-    command = f"aws s3 cp {ec2_path} {s3_path}"
+    command = f'aws s3 cp "{ec2_path}" "{s3_path}"'
 
     response = ssm_client.send_command(
         InstanceIds  = [INSTANCE_ID],

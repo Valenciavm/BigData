@@ -3,13 +3,13 @@ import os, io
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-load_dotenv()
+load_dotenv(override=True)
 
 DB_HOST = os.getenv("DB_HOST")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_PORT = 3306
-DB_NAME = "energiacol"
+DB_NAME = os.getenv("DB_NAME", "energia_col")
 
 database_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 

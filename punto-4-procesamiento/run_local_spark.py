@@ -28,7 +28,7 @@ if os.name == "nt":
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-from pyspark.sql.types import DoubleType, IntegerType, DateType
+from pyspark.sql.types import DoubleType, IntegerType, LongType, DateType
 
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 LOCAL_DATA_DIR = os.path.join(PROJECT_DIR, "punto-2-fuentes-datos", "datos")
@@ -38,22 +38,22 @@ DATASETS_LOCAL = {
     "agentes_gncv": {
         "file": "Consulta_Agentes_de_Gas_Natural_Comprimido_Vehicular_(AUTOMATIZADO)_20261114.csv",
         "format": "csv",
-        "partition_by": ["DEPARTAMENTO"]
+        "partition_by": ["departamento"]
     },
-    "productores_b100": {
+    "productores_b100e": {
         "file": "Productores_Productores_de_B100_y_Etanol_-_Alcohol_Carburante_(AUTOMATIZADO)_20261114.csv",
         "format": "csv",
-        "partition_by": ["ANIO_DESPACHO", "MES_DESPACHO"]
+        "partition_by": ["anio_despacho", "mes_despacho"]
     },
-    "beneficio_frontera": {
+    "beneficios_frontera": {
         "file": "Beneficio_de_estaciones_de_servicio_en_zona_de_frontera__Asignación_de_combustibles_líquidos_en_zona_de_frontera_(AUTOMATIZADO)_20261114.csv",
         "format": "csv",
-        "partition_by": ["ANIO_BENEFICIO", "MES_BENEFICIO"]
+        "partition_by": ["anio_beneficio", "mes_beneficio"]
     },
     "ventas_gncv": {
         "file": "Consulta_Ventas_de_Gas_Natural_Comprimido_Vehicular_(AUTOMATIZADO)_20261114.csv",
         "format": "csv",
-        "partition_by": ["ANIO_VENTA", "MES_VENTA"]
+        "partition_by": ["anio_venta", "mes_venta"]
     }
 }
 
@@ -67,6 +67,8 @@ def parse_us_number(col_name):
     return F.regexp_replace(F.col(col_name), ",", "").cast(DoubleType())
 
 def clean_common(df):
+    for c in df.columns:
+        df = df.withColumnRenamed(c, c.strip().lower())
     for col_name in df.columns:
         df = df.withColumn(col_name, F.trim(F.col(col_name)))
     df = df.dropDuplicates()
@@ -74,48 +76,48 @@ def clean_common(df):
     return df
 
 def transform_agentes_gncv(df):
-    return df.withColumn("LATITUD", F.col("LATITUD").cast(DoubleType())) \
-             .withColumn("LONGITUD", F.col("LONGITUD").cast(DoubleType())) \
-             .withColumn("CODIGO_MUNICIPIO_DANE", F.col("CODIGO_MUNICIPIO_DANE").cast(IntegerType()))
+    return df.withColumn("latitud", F.col("latitud").cast(DoubleType())) \
+             .withColumn("longitud", F.col("longitud").cast(DoubleType())) \
+             .withColumn("codigo_municipio_dane", F.col("codigo_municipio_dane").cast(LongType()))
 
-def transform_productores_b100(df):
-    return df.withColumn("FECHA_DESPACHO", F.to_date(F.col("FECHA_DESPACHO"), "yyyy-MM-dd")) \
-             .withColumn("ANIO_DESPACHO", F.col("ANIO_DESPACHO").cast(IntegerType())) \
-             .withColumn("MES_DESPACHO", F.col("MES_DESPACHO").cast(IntegerType())) \
-             .withColumn("DIA_DESPACHO", F.col("DIA_DESPACHO").cast(IntegerType())) \
-             .withColumn("VOLUMEN_DESPACHADO", parse_colombian_number("VOLUMEN_DESPACHADO")) \
-             .withColumn("LATITUD", F.col("LATITUD").cast(DoubleType())) \
-             .withColumn("LONGITUD", F.col("LONGITUD").cast(DoubleType())) \
-             .withColumn("CODIGO_MUNICIPIO_DANE_PROVEEDOR", F.col("CODIGO_MUNICIPIO_DANE_PROVEEDOR").cast(IntegerType())) \
-             .withColumn("CODIGO_MUNICIPIO_DANE_DESTINO", F.col("CODIGO_MUNICIPIO_DANE_DESTINO").cast(IntegerType()))
+def transform_productores_b100e(df):
+    return df.withColumn("fecha_despacho", F.to_date(F.col("fecha_despacho"), "yyyy-MM-dd")) \
+             .withColumn("anio_despacho", F.col("anio_despacho").cast(IntegerType())) \
+             .withColumn("mes_despacho", F.col("mes_despacho").cast(IntegerType())) \
+             .withColumn("dia_despacho", F.col("dia_despacho").cast(IntegerType())) \
+             .withColumn("volumen_despachado", parse_colombian_number("volumen_despachado")) \
+             .withColumn("latitud", F.col("latitud").cast(DoubleType())) \
+             .withColumn("longitud", F.col("longitud").cast(DoubleType())) \
+             .withColumn("codigo_municipio_dane_proveedor", F.col("codigo_municipio_dane_proveedor").cast(LongType())) \
+             .withColumn("codigo_municipio_dane_destino", F.col("codigo_municipio_dane_destino").cast(LongType()))
 
-def transform_beneficio_frontera(df):
-    return df.withColumn("FECHA_BENEFICIO", F.to_date(F.col("FECHA_BENEFICIO"), "yyyy-MM-dd")) \
-             .withColumn("ANIO_BENEFICIO", F.col("ANIO_BENEFICIO").cast(IntegerType())) \
-             .withColumn("MES_BENEFICIO", F.col("MES_BENEFICIO").cast(IntegerType())) \
-             .withColumn("DIA_BENEFICIO", F.col("DIA_BENEFICIO").cast(IntegerType())) \
-             .withColumn("BENEFICIO", parse_colombian_number("BENEFICIO")) \
-             .withColumn("LATITUD", F.col("LATITUD").cast(DoubleType())) \
-             .withColumn("LONGITUD", F.col("LONGITUD").cast(DoubleType())) \
-             .withColumn("CODIGO_MUNICIPIO_DANE_DESTINO", F.col("CODIGO_MUNICIPIO_DANE_DESTINO").cast(IntegerType()))
+def transform_beneficios_frontera(df):
+    return df.withColumn("fecha_beneficio", F.to_date(F.col("fecha_beneficio"), "yyyy-MM-dd")) \
+             .withColumn("anio_beneficio", F.col("anio_beneficio").cast(IntegerType())) \
+             .withColumn("mes_beneficio", F.col("mes_beneficio").cast(IntegerType())) \
+             .withColumn("dia_beneficio", F.col("dia_beneficio").cast(IntegerType())) \
+             .withColumn("beneficio", parse_colombian_number("beneficio")) \
+             .withColumn("latitud", F.col("latitud").cast(DoubleType())) \
+             .withColumn("longitud", F.col("longitud").cast(DoubleType())) \
+             .withColumn("codigo_municipio_dane_destino", F.col("codigo_municipio_dane_destino").cast(LongType()))
 
 def transform_ventas_gncv(df):
-    return df.withColumn("FECHA_VENTA", F.to_date(F.col("FECHA_VENTA"), "yyyy-MM-dd")) \
-             .withColumn("ANIO_VENTA", F.col("ANIO_VENTA").cast(IntegerType())) \
-             .withColumn("MES_VENTA", F.col("MES_VENTA").cast(IntegerType())) \
-             .withColumn("DIA_VENTA", F.col("DIA_VENTA").cast(IntegerType())) \
-             .withColumn("EDS_ACTIVAS", F.col("EDS_ACTIVAS").cast(IntegerType())) \
-             .withColumn("NUMERO_DE_VENTAS", F.col("NUMERO_DE_VENTAS").cast(IntegerType())) \
-             .withColumn("VEHICULOS_ATENDIDOS", F.col("VEHICULOS_ATENDIDOS").cast(IntegerType())) \
-             .withColumn("CANTIDAD_VOLUMEN_SUMINISTRADO", parse_us_number("CANTIDAD_VOLUMEN_SUMINISTRADO")) \
-             .withColumn("LATITUD", F.col("LATITUD").cast(DoubleType())) \
-             .withColumn("LONGITUD", F.col("LONGITUD").cast(DoubleType())) \
-             .withColumn("CODIGO_MUNICIPIO_DANE", F.col("CODIGO_MUNICIPIO_DANE").cast(IntegerType()))
+    return df.withColumn("fecha_venta", F.to_date(F.col("fecha_venta"), "yyyy-MM-dd")) \
+             .withColumn("anio_venta", F.col("anio_venta").cast(IntegerType())) \
+             .withColumn("mes_venta", F.col("mes_venta").cast(IntegerType())) \
+             .withColumn("dia_venta", F.col("dia_venta").cast(IntegerType())) \
+             .withColumn("eds_activas", F.col("eds_activas").cast(IntegerType())) \
+             .withColumn("numero_de_ventas", F.col("numero_de_ventas").cast(IntegerType())) \
+             .withColumn("vehiculos_atendidos", F.col("vehiculos_atendidos").cast(IntegerType())) \
+             .withColumn("cantidad_volumen_suministrado", parse_us_number("cantidad_volumen_suministrado")) \
+             .withColumn("latitud", F.col("latitud").cast(DoubleType())) \
+             .withColumn("longitud", F.col("longitud").cast(DoubleType())) \
+             .withColumn("codigo_municipio_dane", F.col("codigo_municipio_dane").cast(LongType()))
 
 TRANSFORMATIONS = {
     "agentes_gncv": transform_agentes_gncv,
-    "productores_b100": transform_productores_b100,
-    "beneficio_frontera": transform_beneficio_frontera,
+    "productores_b100e": transform_productores_b100e,
+    "beneficios_frontera": transform_beneficios_frontera,
     "ventas_gncv": transform_ventas_gncv
 }
 

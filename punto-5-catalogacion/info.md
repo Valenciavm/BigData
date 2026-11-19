@@ -1,15 +1,15 @@
-# Milestone 5: Data Cataloging (AWS Glue & Hive Metastore)
+# Punto 5: Catalogación de Datos (AWS Glue Data Catalog & Metastore Hive)
 
-This module implements the **Data Cataloging layer** of the Big Data Lakehouse.
-It bridges the gap between physical Parquet storage on Amazon S3 (`s3://big-data-lake-energiacol/trusted/`) and analytical SQL query engines (**AWS Athena**, **EMR/Hive**, and **SparkSQL**) by defining schemas, data types, and partition metadata in the **AWS Glue Data Catalog**.
+Este módulo implementa la **capa de Catalogación de Datos** del Data Lakehouse.
+Establece el puente entre el almacenamiento físico en formato Parquet en Amazon S3 (`s3://big-data-lake-energiacol/trusted/`) y los motores de consulta analítica (**AWS Athena**, **EMR/Hive** y **SparkSQL**), definiendo los esquemas, tipos de datos fuertemente tipados y metadatos de particionamiento en el **AWS Glue Data Catalog**.
 
 ---
 
-## 1. Catalog Architecture
+## 1. Arquitectura de Catalogación
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│              S3: TRUSTED ZONE (Parquet)                │
+│              S3: ZONA TRUSTED (Parquet)                │
 │  s3://big-data-lake-energiacol/trusted/                │
 │    ├── distribuidores_mayoristas/ (anio_despacho/mes)  │
 │    ├── estaciones_servicio/       (anio_despacho/mes)  │
@@ -23,7 +23,7 @@ It bridges the gap between physical Parquet storage on Amazon S3 (`s3://big-data
               ┌─────────────┴─────────────┐
               ▼                           ▼
     ┌───────────────────┐       ┌───────────────────┐
-    │  Method A: Glue   │       │  Method B: DDL    │
+    │  Método A: Glue   │       │  Método B: DDL    │
     │  Crawler (Python) │       │  Athena / Hive    │
     │  `crawler.py`     │       │  `01_create...sql`│
     └─────────┬─────────┘       └─────────┬─────────┘
@@ -32,25 +32,25 @@ It bridges the gap between physical Parquet storage on Amazon S3 (`s3://big-data
                             ▼
 ┌────────────────────────────────────────────────────────┐
 │                 AWS GLUE DATA CATALOG                  │
-│  Database: `energia_col_trusted`                       │
-│  - 7 Strongly-typed Parquet External Tables            │
-│  - Automated Partition Pruning Metadata                │
+│  Base de Datos: `energia_col_trusted`                  │
+│  - 7 Tablas Externas Parquet fuertemente tipadas       │
+│  - Metadatos para poda de particiones (Partition Pruning)
 └───────────────────────────┬────────────────────────────┘
                             │
-                            ▼ (Milestone 6: SQL Analytics)
+                            ▼ (Punto 6: Analítica SQL)
 ┌────────────────────────────────────────────────────────┐
-│               QUERY ENGINES (Punto 6)                  │
-│       AWS Athena  │  Apache Hive (EMR)  │  SparkSQL   │
+│                 MOTORES DE CONSULTA                    │
+│       AWS Athena  │  Apache Hive (EMR)  │  SparkSQL    │
 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 2. Cataloged Tables & Schema Summary
+## 2. Tablas Catalogadas y Resumen de Esquemas
 
-Database: **`energia_col_trusted`**
+Base de Datos: **`energia_col_trusted`**
 
-| Table Name | Storage Location (`s3://.../trusted/`) | Format | Compression | Partition Keys |
+| Nombre de Tabla | Ubicación en S3 (`s3://.../trusted/`) | Formato | Compresión | Llaves de Partición |
 |---|---|---|---|---|
 | **`distribuidores_mayoristas`** | `trusted/distribuidores_mayoristas/` | Parquet | SNAPPY | `anio_despacho` (INT), `mes_despacho` (INT) |
 | **`estaciones_servicio`** | `trusted/estaciones_servicio/` | Parquet | SNAPPY | `anio_despacho` (INT), `mes_despacho` (INT) |
@@ -62,50 +62,84 @@ Database: **`energia_col_trusted`**
 
 ---
 
-## 3. Cataloging Methods Provided
+## 3. Métodos de Catalogación Disponibles
 
-### Method A: Automated AWS Glue Crawler (`crawler.py`)
-Provisions the database and configures an AWS Glue Crawler targeting the entire `trusted/` S3 prefix.
+### Método A: AWS Glue Crawler Automatizado (`crawler.py`)
+Aprovisiona la base de datos y configura un Crawler de AWS Glue que escanea automáticamente todo el prefijo `trusted/` en S3.
 
-**Prerequisites:**
-* IAM Role with `AWSGlueServiceRole` and read access to `s3://big-data-lake-energiacol/trusted/`.
-* Set `GLUE_ROLE_ARN` in your `.env`:
+**Requisitos Previos:**
+* Rol IAM con la política `AWSGlueServiceRole` y permisos de lectura sobre `s3://big-data-lake-energiacol/trusted/`.
+* Configurar `GLUE_ROLE_ARN` en el archivo `.env`:
   ```env
   GLUE_ROLE_ARN=arn:aws:iam::<account_id>:role/<role-name>
   ```
 
-**Execution:**
+**Ejecución:**
 ```powershell
-# Create or update the Database and Crawler
+# Crear o actualizar la Base de Datos y el Crawler
 python punto-5-catalogacion/crawler.py
 
-# Or create AND trigger the crawler in one step
+# O crear Y ejecutar el crawler en un solo paso
 python punto-5-catalogacion/crawler.py --run
 ```
 
 ---
 
-### Method B: Deterministic SQL DDL Scripts (`01_create_tables.sql`)
-Can be executed directly inside the **AWS Athena Query Editor** or in an **EMR Hive CLI**:
+### Método B: Scripts DDL Determinísticos en SQL (`01_create_tables.sql`)
+Pueden ejecutarse directamente en el **Editor de Consultas de AWS Athena** o en el CLI de Hive en EMR:
 
-1. Open **AWS Console → Athena → Query Editor**.
-2. Select your query result S3 location (if prompted).
-3. Paste and run the queries from [`01_create_tables.sql`](file:///c:\Users\valen\OneDrive\Escritorio\BigData\BigData\punto-5-catalogacion\01_create_tables.sql).
-4. Run `MSCK REPAIR TABLE <table_name>;` to register all S3 partitions into the catalog.
+1. Abrir **Consola AWS → Athena → Query Editor**.
+2. Configurar la ubicación de resultados de consulta en S3 (`s3://big-data-lake-energiacol/athena-results/`).
+3. Pegar y ejecutar las sentencias DDL de [`01_create_tables.sql`](./01_create_tables.sql).
+4. Ejecutar `MSCK REPAIR TABLE <nombre_tabla>;` para registrar todas las particiones descubiertas en S3.
 
 ---
 
-## 4. Verification & Validation
+## 4. Verificación y Validación
 
-Once cataloged, run these SQL queries in Athena to confirm table registration:
+Una vez catalogadas las tablas, se comprueba su correcto registro ejecutando estas consultas en Athena:
 
 ```sql
--- 1. Verify tables in catalog
+-- 1. Verificar tablas creadas en el catálogo
 SHOW TABLES IN energia_col_trusted;
 
--- 2. Verify partition discovery
+-- 2. Verificar descubrimiento de particiones
 SHOW PARTITIONS energia_col_trusted.distribuidores_mayoristas;
 
--- 3. Verify row sample
+-- 3. Muestra de filas
 SELECT * FROM energia_col_trusted.ventas_gncv LIMIT 5;
 ```
+
+---
+
+## 5. Evidencias de Catalogación y Capturas de Pantalla
+
+Las siguientes capturas documentan el aprovisionamiento del catálogo en Glue Data Catalog, la ejecución del Crawler y su integración con AWS Athena:
+
+### 1. Estado del AWS Glue Crawler
+El crawler automatizado `energia_col_trusted_crawler` en estado `READY` con su última ejecución en `SUCCEEDED`:
+![Estado del Crawler](./evidencias/01_glue_crawler_config.png)
+
+### 2. Métricas de Ejecución del Crawler (Particiones Descubiertas)
+Registro de ejecución detallado indicando **7 tablas creadas** y **924 particiones descubiertas** automáticamente en S3:
+![Detalles de Ejecución del Crawler](./evidencias/02_glue_crawler_run_details.png)
+
+### 3. Base de Datos en Glue Data Catalog
+Base de datos `energia_col_trusted` aprovisionada con ubicación `s3://big-data-lake-energiacol/trusted/`:
+![Base de Datos Glue](./evidencias/03_glue_database_catalog.png)
+
+### 4. Lista de Tablas Catalogadas en Formato Parquet
+Las 7 tablas del Data Lakehouse catalogadas con clasificación `Parquet`:
+![Tablas Catalogadas](./evidencias/04_glue_tables_list.png)
+
+### 5. Definición del Esquema de Columnas
+Esquema fuertemente tipado de la tabla `agentes_gncv` (códigos DANE como `bigint`, coordenadas geográficas como `double`, llave de partición como `departamento`):
+![Esquema de Tabla](./evidencias/05_glue_table_schema.png)
+
+### 6. Metadatos de Particiones
+Particiones físicas descubiertas para `agentes_gncv` correspondientes a los departamentos de Colombia:
+![Particiones de Tabla](./evidencias/06_glue_table_partitions.png)
+
+### 7. Integración con el Editor de Consultas de AWS Athena
+AWS Athena conectado de forma Serverless a `energia_col_trusted` en el `AwsDataCatalog`, con las 7 tablas listas para consulta analítica:
+![Conexión con Athena](./evidencias/07_athena_query_editor_catalog.png)

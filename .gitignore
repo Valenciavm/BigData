@@ -23,3 +23,7 @@ output_trusted/
 **/output_trusted/
 .hadoop/
 **/.hadoop/
+
+# Temp captures folder
+capturas*/
+

@@ -59,25 +59,21 @@ También, deberá crear un repositorio en GitHub, creando un directorio explíci
 
 ## III. Desarrollo
 
-* **Punto 1:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 1:** Formulación del caso de estudio del sector energético colombiano y 5 preguntas de negocio descriptivas y analíticas. Ver documentación en [`punto-1-caso-estudio/caso-estudio.md`](./punto-1-caso-estudio/caso-estudio.md).
 
+* **Punto 2:** Simulación de fuentes de datos heterogéneas (RDS MariaDB, EC2 Linux y Socrata Open Data URLs). Ver mapeo técnico y justificaciones en [`punto-2-fuentes-datos/info.md`](./punto-2-fuentes-datos/info.md).
 
-* **Punto 2:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 3:** Ingesta automática hacia el Data Lake S3 en capa Raw (Bronze). Scripts modulares de ingesta para RDS, EC2 y Socrata API. Ver documentación en [`punto-3-ingesta-s3/info.md`](./punto-3-ingesta-s3/info.md).
 
+* **Punto 4:** Procesamiento y limpieza distribuida de datos (Raw a Trusted / Bronze a Silver) con AWS Glue y PySpark. Formato Apache Parquet con compresión Snappy y particionamiento físico optimizado. Ver documentación técnica, guía de ejecución local con Hadoop winutils y evidencias en [`punto-4-procesamiento/info.md`](./punto-4-procesamiento/info.md).
 
-* **Punto 3:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
-
-
-* **Punto 4:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
-
-
-* **Punto 5:** Catalogación de tablas en AWS Glue Data Catalog y Metastore EMR/Hive. Ver documentación completa y scripts en [`punto-5-catalogacion/info.md`](./punto-5-catalogacion/info.md), [`01_create_tables.sql`](./punto-5-catalogacion/01_create_tables.sql) y [`crawler.py`](./punto-5-catalogacion/crawler.py).
-
+* **Punto 5:** Catalogación de tablas en AWS Glue Data Catalog y Metastore EMR/Hive mediante Crawler automatizado y scripts DDL. Ver documentación completa, capturas de verificación y scripts en [`punto-5-catalogacion/info.md`](./punto-5-catalogacion/info.md), [`01_create_tables.sql`](./punto-5-catalogacion/01_create_tables.sql) y [`crawler.py`](./punto-5-catalogacion/crawler.py).
 
 * **Punto 6:** Consultas analíticas descriptivas resolviendo las 5 preguntas de negocio con AWS Athena, EMR Hive y SparkSQL. Ver documentación técnica detallada en [`punto-6-consultas-sql/info.md`](./punto-6-consultas-sql/info.md), scripts SQL en [`01_consultas_negocio_athena_hive.sql`](./punto-6-consultas-sql/01_consultas_negocio_athena_hive.sql) y script distribuido en [`spark_sql_analytics.py`](./punto-6-consultas-sql/spark_sql_analytics.py).
 
+* **Punto 7:** Consultas y procesamiento analítico descriptivo con Apache Spark en Python (`pyspark`). Scripts optimizados distribuidos por cada pregunta de negocio (Q1 a Q5) desplegados en AWS Glue. Ver documentación técnica y código en [`punto-7-pyspark-analitico/info.md`](./punto-7-pyspark-analitico/info.md).
 
-* **Punto 7:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 8:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
 
 
 * **Punto 8:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`

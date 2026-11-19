@@ -71,10 +71,10 @@ También, deberá crear un repositorio en GitHub, creando un directorio explíci
 * **Punto 4:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
 
 
-* **Punto 5:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 5:** Catalogación de tablas en AWS Glue Data Catalog y Metastore EMR/Hive. Ver documentación completa y scripts en [`punto-5-catalogacion/info.md`](./punto-5-catalogacion/info.md), [`01_create_tables.sql`](./punto-5-catalogacion/01_create_tables.sql) y [`crawler.py`](./punto-5-catalogacion/crawler.py).
 
 
-* **Punto 6:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`
+* **Punto 6:** Consultas analíticas descriptivas resolviendo las 5 preguntas de negocio con AWS Athena, EMR Hive y SparkSQL. Ver documentación técnica detallada en [`punto-6-consultas-sql/info.md`](./punto-6-consultas-sql/info.md), scripts SQL en [`01_consultas_negocio_athena_hive.sql`](./punto-6-consultas-sql/01_consultas_negocio_athena_hive.sql) y script distribuido en [`spark_sql_analytics.py`](./punto-6-consultas-sql/spark_sql_analytics.py).
 
 
 * **Punto 7:** `<<descripciones, pantallazos, evidencias, extracto de código, si aplica>>`

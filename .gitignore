@@ -17,3 +17,9 @@ __pycache__/
 # Large data files
 *.csv
 *.zip
+
+# Spark local output & Windows binaries
+output_trusted/
+**/output_trusted/
+.hadoop/
+**/.hadoop/

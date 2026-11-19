@@ -1,12 +1,12 @@
 **SI3007 Sistemas Distribuidos - ST0263 Tópicos Especiales en Telemática, 2026-2**
 
-**Proyecto 2 de BIG DATA**
+# **Proyecto 2 de BIG DATA**
 
 ## I. Integrantes del proyecto
 
-* <<nombre, email-eafit>>
-* <<nombre, email-eafit>>
-* <<nombre, email-eafit>>
+* Martin Valencia, email-eafit
+* Samuel Rivero, email-eafit
+* Sergio Deluquez, sdeluque1@eafit.edu.co
 
 **Repositorio GitHub del proyecto 2:** `[https://github.com/](https://github.com/)...`
 

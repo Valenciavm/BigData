@@ -232,8 +232,8 @@ agents = agents.withColumn(
 # ============================================================
 
 agents_with_code = agents.filter(
-    F.col("codigo_municipio_dane").isNotNull()
-    & F.col("codigo_municipio_dane") != ""
+    (F.col("codigo_municipio_dane").isNotNull())
+    & (F.col("codigo_municipio_dane") != "")
 )
 
 municipal_infrastructure = (

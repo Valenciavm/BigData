@@ -309,8 +309,8 @@ border_pivot = (
     .groupBy("anio", "mes", "producto")
     .pivot("zona_frontera_normalizada", ["SI", "NO"])
     .agg(
-        F.first("volumen_total"),
-        F.first("municipios")
+        F.first("volumen_total").alias("volumen_total"),
+        F.first("municipios").alias("municipios")
     )
 )
 

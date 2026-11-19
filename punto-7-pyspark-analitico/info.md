@@ -290,7 +290,7 @@ Durante las ejecuciones se identificaron algunas incidencias asociadas a los dat
 | Desarrollo del script Q4 | Implementado |
 | Desarrollo del script Q5 | Implementado |
 | Ejecución inicial de los cinco trabajos | Ejecutada |
-| Generación de resultados Analytics | Ejecutada, con incidencias pendientes |
+| Generación de resultados Analytics | Ejecutada exitosamente (Q1 a Q5) |
 | Registro de resultados en Glue Catalog | Realizado |
 | Consultas de validación en Athena | Realizadas |
 | Desarrollo inicial de `common` | Realizado |

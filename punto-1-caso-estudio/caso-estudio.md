@@ -1,4 +1,4 @@
-# Punto 1: Caso de Estudio y Preguntas de Negocio
+# Caso de Estudio y Preguntas de Negocio
 ## *Descripción del Caso de Estudio*
 
 El proyecto aborda la cadena logística, distribución y consumo del sector energético e hidrocarburífero en Colombia (Gasolina, Diésel/ACPM, Biocombustibles, Gas Natural Vehicular GNCV y métricas de consumo eléctrico).

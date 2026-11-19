@@ -4,6 +4,7 @@ import sys
 
 # ── Pipeline registry ────────────────────────────────────────────────────────
 PIPELINES = {
+    "0": ("Sanity Check (Pre-flight)", "sanity_check.py"),
     "1": ("EC2  → S3", "ingest_ec2.py"),
     "2": ("RDS  → S3", "ingest_rds.py"),
     "3": ("API  → S3", "ingest_api.py"),
@@ -42,27 +43,32 @@ async def run_pipeline(label: str, script: str) -> bool:
 
 # ── Menu ─────────────────────────────────────────────────────────────────────
 def prompt_selection() -> list[str]:
-    print("\n╔══════════════════════════════╗")
-    print("║   S3 Ingestion Pipeline      ║")
-    print("╠══════════════════════════════╣")
-    for key, (label, script) in PIPELINES.items():
-        print(f"║  {key}  {label:<24}║")
-    print("║  all  Run all concurrently   ║")
-    print("╚══════════════════════════════╝")
-    print("You can also combine, e.g: 1 3  or  1,2")
+    print("\n╔══════════════════════════════════════╗")
+    print("║        S3 Ingestion Pipeline         ║")
+    print("╠══════════════════════════════════════╣")
+    for key, (label, _) in PIPELINES.items():
+        print(f"║  {key}  {label:<32}║")
+    print("║  all  Run 1, 2, 3 concurrently       ║")
+    print("╚══════════════════════════════════════╝")
+    print("You can also combine, e.g: 0  or  1 2  or  all")
 
-    raw = input("\nChoice: ").strip().lower()
+    if len(sys.argv) > 1:
+        raw = " ".join(sys.argv[1:]).strip().lower()
+        print(f"\nChoice (from args): {raw}")
+    else:
+        raw = input("\nChoice: ").strip().lower()
 
     if raw == "all":
-        return list(PIPELINES.keys())
+        # 'all' runs the 3 ingestion pipelines concurrently (1, 2, 3)
+        return ["1", "2", "3"]
 
-    # Accept space- or comma-separated keys like "1 3" or "1,2"
+    # Accept space- or comma-separated keys like "0" or "1 3" or "1,2"
     keys = [k.strip() for k in raw.replace(",", " ").split()]
     valid = [k for k in keys if k in PIPELINES]
     invalid = [k for k in keys if k not in PIPELINES]
 
     if invalid:
-        print(f"⚠  Unknown option(s) ignored: {invalid}")
+        print(f"Unknown option(s) ignored: {invalid}")
     if not valid:
         print("No valid option selected. Exiting.")
         sys.exit(1)
@@ -85,7 +91,7 @@ async def main() -> None:
     passed = sum(results)
     total  = len(results)
     print(f"\n{'─'*40}")
-    print(f"Done — {passed}/{total} pipelines succeeded.")
+    print(f"Done — {passed}/{total} step(s) succeeded.")
 
 if __name__ == "__main__":
     asyncio.run(main())

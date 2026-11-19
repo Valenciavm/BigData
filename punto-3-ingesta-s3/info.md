@@ -16,9 +16,9 @@
 s3://big-data-lake-energiacol/
 └── raw/
     ├── ec2/
-    │   ├── beneficios-frontera/      <- CSV  (~90K rows)
-    │   ├── ventas-gncv/              <- CSV  (~135K rows)
-    │   └── iea-electricity/          <- ZIP  (~180K rows) — archivo descargado de Kaggle, almacenado manualmente en EC2
+    │   ├── beneficios-frontera/                 <- CSV  (~90K rows)
+    │   ├── ventas-gncv/                         <- CSV  (~135K rows)
+    │   └── iea-monthly-electricity-statistics/  <- file_zip.csv (~180K rows)
     │
     ├── mariadb/
     │   ├── productores_b100E/        <- table.csv  (~47K rows)
@@ -54,7 +54,7 @@ No SSH required — the EC2 instance must have the SSM Agent running and an IAM 
 Files copied:
 - `/home/ec2-user/data/beneficio-frontera/*.csv` -> `raw/ec2/beneficios-frontera/`
 - `/home/ec2-user/data/ventas-gncv/*.csv` -> `raw/ec2/ventas-gncv/`
-- `/home/ec2-user/data/iea-electricity/archive.zip` -> `raw/ec2/iea-electricity/`
+- `/home/ec2-user/data/iea-monthly-electricity-statistics/file_zip.csv` -> `raw/ec2/iea-monthly-electricity-statistics/`
 
 ### `ingest_rds.py` — RDS MariaDB -> S3
 Connects to MariaDB via SQLAlchemy, reads each table with pandas, serializes to CSV in memory, and uploads to S3 via `boto3.put_object`.
@@ -63,21 +63,29 @@ Connects to MariaDB via SQLAlchemy, reads each table with pandas, serializes to 
 Paginates through the Socrata API in chunks of 50,000 records. Each chunk is serialized to JSON and uploaded as `data_0.json`, `data_1.json`, etc.
 Requires `GOV_TOKEN` in `.env`.
 
+### `sanity_check.py` — Pre-flight verification
+Verifies environment variables, AWS IAM credentials via STS, S3 bucket reachability, RDS MariaDB connectivity & tables, EC2 instance state & SSM agent ping status, and open data Socrata API connectivity with token.
+
 ### `ingest_pipeline.py` — Orchestrator
-Interactive menu to run pipelines 1, 2, 3, or all concurrently using `asyncio`.
+Interactive menu to run pre-flight check (0), or pipelines 1, 2, 3 individually or all concurrently using `asyncio`.
 
 ```
-Selection options: 1 | 2 | 3 | all | 1 3 | 1,2
+Selection options: 0 | 1 | 2 | 3 | all | 1 3 | 1,2
 ```
 
 ---
 
 ## Environment Variables (`.env`)
 
-| Variable | Used by |
-|---|---|
-| `DB_HOST` | `ingest_rds.py` |
-| `DB_USER` | `ingest_rds.py` |
-| `DB_PASSWORD` | `ingest_rds.py` |
-| `EC2_INSTANCE_ID` | `ingest_ec2.py` |
-| `GOV_TOKEN` | `ingest_api.py` |
+| Variable | Used by | Description |
+|---|---|---|
+| `DB_HOST` | `ingest_rds.py`, `sanity_check.py` | RDS endpoint hostname |
+| `DB_USER` | `ingest_rds.py`, `sanity_check.py` | RDS master username |
+| `DB_PASSWORD` | `ingest_rds.py`, `sanity_check.py` | RDS master password |
+| `DB_NAME` | `ingest_rds.py`, `sanity_check.py` | Target database name (`energia_col`) |
+| `EC2_INSTANCE_ID` | `ingest_ec2.py`, `sanity_check.py` | EC2 instance ID |
+| `GOV_TOKEN` | `ingest_api.py`, `sanity_check.py` | datos.gov.co App Token |
+| `AWS_ACCESS_KEY_ID` | All AWS scripts (`boto3`) | Project-scoped AWS Access Key |
+| `AWS_SECRET_ACCESS_KEY` | All AWS scripts (`boto3`) | Project-scoped AWS Secret Key |
+| `AWS_SESSION_TOKEN` | All AWS scripts (`boto3`) | (Optional) AWS Academy / temporary session token |
+| `AWS_DEFAULT_REGION` | All AWS scripts (`boto3`) | `us-east-2` |

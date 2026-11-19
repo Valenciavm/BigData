@@ -428,3 +428,42 @@ spark-submit \
 
 1. **Poda de Particiones (*Partition Pruning*):** Todas las consultas filtran por las columnas particionadas (`anio_despacho >= 2022`, `year BETWEEN 2018 AND 2022`). Athena y Spark omiten leer los directorios de años anteriores, escaneando únicamente una fracción de los datos.
 2. **Almacenamiento Columnar Parquet con Snappy:** En lugar de escanear los 25+ campos de los archivos CSV originales, Athena proyecta únicamente las 4 a 6 columnas requeridas por consulta, reduciendo el volumen de escaneo y costo en más de un **90%**.
+
+---
+
+## 6. Evidencias de Ejecución y Resultados
+
+Las siguientes capturas documentan la ejecución en tiempo real de las consultas analíticas en AWS Athena y en el Notebook interactivo de AWS Glue PySpark:
+
+### 1. Pregunta 1: Concentración del Mercado Mayorista en AWS Athena
+Ejecución de la consulta Q1 con `TRY_CAST` completada exitosamente en 1.4 segundos:
+![Consulta Q1 en Athena](./evidencias/01_q1_athena_query_and_success.png)
+
+### 2. Resultados de la Pregunta 1
+Top 5 departamentos por volumen despachado y porcentajes de participación nacional calculados mediante Window Functions:
+![Resultados Q1](./evidencias/02_q1_results_market_concentration.png)
+
+### 3. Pregunta 2: Subsidios en Zonas de Frontera en AWS Athena
+Consulta Q2 cruzando estaciones de servicio con cupos UPME:
+![Consulta Q2 en Athena](./evidencias/03_q2_athena_subsidies_frontier.png)
+
+### 4. Resultados de la Pregunta 2
+Ratios de utilización de cupo en municipios fronterizos (Cúcuta, Sardinata, Potosí):
+![Resultados Q2](./evidencias/04_q2_results_subsidies_frontier.png)
+
+### 5. Resultados de la Pregunta 3: Densidad de Infraestructura GNCV
+Correlación entre talleres de conversión autorizados, estaciones operativas y volumen de gas vehicular suministrado a nivel municipal:
+![Resultados Q3](./evidencias/05_q3_results_gncv_density_municipal.png)
+
+### 6. Pregunta 4: Cumplimiento de Biocombustibles en AWS Athena
+Consulta analítica estimando la cuota legal mandatoria del 10% frente a la producción real de B100 y Etanol:
+![Consulta Q4 en Athena](./evidencias/06_q4_athena_biofuels_query.png)
+
+### 7. Resultados de la Pregunta 4
+Porcentajes de cobertura mensual de Etanol y Biodiésel en despachos mayoristas:
+![Resultados Q4](./evidencias/07_q4_results_biofuels_compliance.png)
+
+### 8. Pregunta 5: Macro-tendencias Energéticas en AWS Glue PySpark Notebook
+Ejecución distribuida interactiva en PySpark de la serie temporal integrada (hidroeléctrica, térmica, gas vehicular y combustibles líquidos):
+![Resultados Q5 en Glue Spark Notebook](./evidencias/08_q5_spark_notebook_energy_trends.png)
+
